@@ -15,27 +15,29 @@ class OptionWindow(tk.Tk):
 
         # Create language selection list
         self.language_var = tk.StringVar()
-        self.language_var.set(
-            settings.get("language", "EN")
-        )  # Set language from database
         language_label = tk.Label(self, text="Select Language:")
         language_label.pack(pady=5)
         language_list = ttk.Combobox(
             self, values=["EN", "IT", "BR", "ES"], textvariable=self.language_var
         )
         language_list.pack(pady=5)
+        # set language initial value from data base
+        language_from_db = settings["language"]
+        language_index_dict = {"EN": 0, "ES": 1, "BR": 2, "IT": 3}
+        language_list.current(language_index_dict[language_from_db])
 
         # Create font weight selection list
         self.weight_var = tk.StringVar()
-        self.weight_var.set(
-            settings.get("font_weight", "Normal")
-        )  # Set font weight from database
         weight_label = tk.Label(self, text="Select Font Weight:")
         weight_label.pack(pady=5)
         weight_list = ttk.Combobox(
             self, values=["Normal", "Bold"], textvariable=self.weight_var
         )
         weight_list.pack(pady=5)
+        # set font_weight initial value from data base
+        font_weight_from_db = settings["font_weight"]
+        font_weight_index_dict = {"NORMAL": 0, "BOLD": 1}
+        weight_list.current(font_weight_index_dict[font_weight_from_db])
 
         # Create color picker
         self.color_var = tk.StringVar()
