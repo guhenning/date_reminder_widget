@@ -1,4 +1,5 @@
 import sqlite3
+import os
 
 
 class DatabaseConnection:
@@ -6,6 +7,10 @@ class DatabaseConnection:
         self.db_name = db_name
         self.connection = None
         self.cursor = None
+
+        # Check if the database file exists, create it if not
+        if not os.path.isfile(db_name):
+            self.create_sqlite_file()
 
     def __enter__(self):
         self.connect()
@@ -17,8 +22,21 @@ class DatabaseConnection:
         else:
             print("No connection to close.")
 
+    def create_sqlite_file(self):
+        try:
+            # Connect to the SQLite database (creates the file if it doesn't exist)
+            self.connection = sqlite3.connect(self.db_name)
+            self.cursor = self.connection.cursor()
+            self.create_table()
+        except sqlite3.Error as e:
+            print(f"Error creating SQLite file: {e}")
+        finally:
+            if self.connection is not None:
+                self.connection.close()
+
     def connect(self):
         try:
+            # Connect to the SQLite database
             self.connection = sqlite3.connect(self.db_name)
             self.cursor = self.connection.cursor()
         except sqlite3.Error as e:
@@ -41,11 +59,26 @@ class DatabaseConnection:
                     option_window_y_position INTEGER NOT NULL DEFAULT 50,
                     data_window_x_position INTEGER NOT NULL DEFAULT 0.0,
                     data_window_y_position INTEGER NOT NULL DEFAULT 0.0,
-                    opacity TEXT NOT NULL DEFAUL 80%,
+                    opacity TEXT NOT NULL DEFAULT '80%'
+                );                
+                """
+
+                insert_data_query = """
+                INSERT INTO settings (
+                    language, font_weight, text_colour,
+                    widget_colour, widget_x_position, widget_y_position,
+                    option_window_x_position, option_window_y_position,
+                    data_window_x_position, data_window_y_position,
+                    opacity
+                ) VALUES (
+                    'EN', 'NORMAL', '#000000', '#ffffff', 1624, 75, 1370, 50, 0.0, 0.0, '80%'
                 );
                 """
+
                 self.cursor.execute(create_table_query)
+                self.cursor.execute(insert_data_query)
                 self.connection.commit()
+                print("Table 'settings' created successfully")
             except sqlite3.Error as e:
                 print(f"Error creating table: {e}")
         else:
@@ -105,38 +138,39 @@ class DatabaseConnection:
 
 # If the settings.sqlite is deleted run this db_connection.py to create the sqlite table again with default values
 if __name__ == "__main__":
-    # Using the 'with' statement automatically manages the connection
-    with DatabaseConnection() as db_connection:
-        # Connect to the SQLite database
-        db_connection.connect()
+    ...
+    # # Using the 'with' statement automatically manages the connection
+    # with DatabaseConnection() as db_connection:
+    #     # Connect to the SQLite database
+    #     db_connection.connect()
 
-        # Create a table in the database
-        db_connection.create_table()
-        # Connection is automatically closed when exiting the 'with' block
+    #     # Create a table in the database
+    #     db_connection.create_table()
+    # Connection is automatically closed when exiting the 'with' block
 
-        # # Inserting some dummy data for testing
-        # with sqlite3.connect("settings.sqlite") as connection:
-        #     cursor = connection.cursor()
-        #     cursor.execute(
-        #         "INSERT INTO settings (language, font_weight, text_colour) VALUES (?, ?, ?)",
-        #         ("EN", "BOLD", "#ff0000"),
-        #     )
-        #     connection.commit()
+    # # Inserting some dummy data for testing
+    # with sqlite3.connect("settings.sqlite") as connection:
+    #     cursor = connection.cursor()
+    #     cursor.execute(
+    #         "INSERT INTO settings (language, font_weight, text_colour) VALUES (?, ?, ?)",
+    #         ("EN", "BOLD", "#ff0000"),
+    #     )
+    #     connection.commit()
 
-        # # Reading and printing settings
-        # dbc = DatabaseConnection()
-        # settings = dbc.get_settings()
-        # print(settings)
+    # # Reading and printing settings
+    # dbc = DatabaseConnection()
+    # settings = dbc.get_settings()
+    # print(settings)
 
-        # # Updating values for row with ID 1
-        # update_values = {"font_weight": "NORMAL", "text_colour": "#00ff00"}
-        # db_connection.update_row(1, update_values)
+    # # Updating values for row with ID 1
+    # update_values = {"font_weight": "NORMAL", "text_colour": "#00ff00"}
+    # db_connection.update_row(1, update_values)
 
-        # # Reading and printing settings after update
-        # settings_after_update = db_connection.get_settings()
-        # print("\nSettings after update:")
-        # print(settings_after_update)
+    # # Reading and printing settings after update
+    # settings_after_update = db_connection.get_settings()
+    # print("\nSettings after update:")
+    # print(settings_after_update)
 
-        # Getting specific value "font_weight"
-        # font_weight = db_connection.get_settings("font_weight")
-        # print(font_weight)
+    # Getting specific value "font_weight"
+    # font_weight = db_connection.get_settings("font_weight")
+    # print(font_weight)
