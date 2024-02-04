@@ -35,12 +35,13 @@ class DatabaseConnection:
                     font_weight TEXT NOT NULL DEFAULT 'NORMAL',
                     text_colour TEXT NOT NULL DEFAULT '#000000',
                     widget_colour TEXT NOT NULL DEFAULT '#ffffff',
-                    widget_x_position INTEGER NOT NULL DEFAULT 1065,
-                    widget_y_position INTEGER NOT NULL DEFAULT 50,
+                    widget_x_position INTEGER NOT NULL DEFAULT 1624,
+                    widget_y_position INTEGER NOT NULL DEFAULT 75,
                     option_window_x_position INTEGER NOT NULL DEFAULT 1370,
                     option_window_y_position INTEGER NOT NULL DEFAULT 50,
                     data_window_x_position INTEGER NOT NULL DEFAULT 0.0,
-                    data_window_y_position INTEGER NOT NULL DEFAULT 0.0
+                    data_window_y_position INTEGER NOT NULL DEFAULT 0.0,
+                    opacity TEXT NOT NULL DEFAUL 80%,
                 );
                 """
                 self.cursor.execute(create_table_query)
@@ -96,7 +97,6 @@ class DatabaseConnection:
                 # Execute the update query
                 self.cursor.execute(update_query, tuple(update_values))
                 self.connection.commit()
-                print(f"Row with ID {row_id} updated successfully.")
             except sqlite3.Error as e:
                 print(f"Error updating row: {e}")
         else:

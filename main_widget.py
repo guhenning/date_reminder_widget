@@ -2,15 +2,23 @@ import tkinter as tk
 from datetime import datetime, timedelta
 import csv
 from option_window import OptionWindow
+from db_connection import DatabaseConnection
 
 
 class DraggableWindow(tk.Tk):
     def __init__(self):
         super().__init__()
 
+        with DatabaseConnection() as db_connection:
+            self.settings = db_connection.get_settings()[0]
+
         self.title("")  # Set an empty title to remove the default label
         self.overrideredirect(True)  # Remove window borders
-        self.attributes("-alpha", 0.8)  # Set window transparency
+
+        opacity_percentage_dict = {f"{i}%": i / 100 for i in range(10, 101, 10)}
+        self.attributes(
+            "-alpha", opacity_percentage_dict[self.settings["opacity"]]
+        )  # Set window transparency
 
         # Load data from the CSV file
         self.data = self.load_data("dates.csv")
@@ -22,39 +30,53 @@ class DraggableWindow(tk.Tk):
         size = len(nearest_dates) * 100  # 100 padding for each item
 
         # Calculate the widget start position
+        x = self.settings["widget_x_position"]  # default 275
+        y = self.settings["widget_y_position"]  #  default 50
+
         screen_width = self.winfo_screenwidth()
         screen_height = self.winfo_screenheight()
-        x_centered = screen_width - 275  # right margin 275
-        # print(f"X main: {x_centered}")
-
-        y_centered = screen_height - (screen_height - 50)  # top margin 50
-        # print(f"Y main: {y_centered}")
+        # x  # right margin 275
+        # y  # top margin 50
 
         # Set the window size and position with equal padding
-        self.geometry(f"250x{size}+{x_centered}+{y_centered}")
+        self.geometry(f"250x{size}+{x}+{y}")
 
         # Default language
-        self.language = "EN"
+        self.language = self.settings["language"]
 
         # Create a frame for centering labels
         frame = tk.Frame(self)
         frame.pack(expand=True, fill=tk.X)
 
+        translations = {
+            "EN": {"name": "Name", "date": "Date", "description": "Description"},
+            "IT": {"name": "Nome", "date": "Data", "description": "Descrizione"},
+            "BR": {"name": "Nome", "date": "Data", "description": "Descrição"},
+            "ES": {"name": "Nombre", "date": "Fecha", "description": "Descripción"},
+        }
+        translated_text = translations[self.language]
+
+        custom_font = ("Arial", 10, self.settings["font_weight"].lower())
+
         # Display information for all entries with the nearest date
         for nearest_date, nearest_data in nearest_dates:
-            label_text = f"{self.get_text('Name')}: {nearest_data['name']}\n{self.get_text('Date')}: {nearest_data['date']}\n{self.get_text('Description')}: {nearest_data['description']}"
+            label_text = f"{translated_text['name']}: {nearest_data['name']}\n{translated_text['date']}: {nearest_data['date']}\n{translated_text['description']}: {nearest_data['description']}"
             label = tk.Label(
                 frame,
                 text=label_text,
                 anchor="center",
                 justify="center",
                 wraplength=200,
+                font=custom_font,
+                fg=self.settings["text_colour"],
             )
             label.pack(pady=10)
 
         # Bind mouse events for dragging to the entire window
         self.bind("<ButtonPress-1>", self.on_drag_start)
         self.bind("<B1-Motion>", self.on_drag_motion)
+        # Bind mouse button release event
+        self.bind("<ButtonRelease-1>", self.on_drag_release)
 
         # Bind key events
         self.bind("<Delete>", self.close_widget)
@@ -101,6 +123,18 @@ class DraggableWindow(tk.Tk):
         y = self.winfo_y() + deltay
         self.geometry(f"+{x}+{y}")
 
+    def on_drag_release(self, event):
+        # Record the position when the user releases the mouse button
+        with DatabaseConnection() as db_connection:
+            # Update position values in the database
+            db_connection.update_row(
+                1,
+                {
+                    "widget_x_position": self.winfo_x(),
+                    "widget_y_position": self.winfo_y(),
+                },
+            )
+
     # closing the widget
     def close_widget(self, event):
         self.destroy()
@@ -116,17 +150,11 @@ class DraggableWindow(tk.Tk):
             self.option_window = None
         else:
             # If the option window is closed, open it
-            self.option_window = OptionWindow()
+            with DatabaseConnection() as db_connection:
+                # get the updated settings
+                self.settings = db_connection.get_settings()[0]
+            self.option_window = OptionWindow(self.settings)
             self.option_window.mainloop()
-
-    def get_text(self, key):
-        translation = {
-            "EN": {"Name": "Name", "Date": "Date", "Description": "Description"},
-            "IT": {"Name": "Nome", "Date": "Data", "Description": "Descrizione"},
-            "BR": {"Name": "Nome", "Date": "Data", "Description": "Descrição"},
-            "ES": {"Name": "Nombre", "Date": "Fecha", "Description": "Descripción"},
-        }
-        return translation[self.language][key]
 
 
 if __name__ == "__main__":

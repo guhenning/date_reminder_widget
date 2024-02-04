@@ -5,17 +5,15 @@ from db_connection import DatabaseConnection
 
 
 class OptionWindow(tk.Tk):
-    def __init__(self):
+    def __init__(self, settings=None):
         super().__init__()
-
-        with DatabaseConnection() as db_connection:
-            settings = db_connection.get_settings()[0]
 
         translation_option = {
             "EN": (
                 "Settings",
                 "Language",
                 "Font Weight",
+                "Opacity",
                 "Text Colour",
                 "Hex Code",
                 "Change Color",
@@ -25,6 +23,7 @@ class OptionWindow(tk.Tk):
                 "Impostazioni",
                 "Lingua",
                 "Peso del Carattere",
+                "Opacità",
                 "Colore del Testo",
                 "Codice Esadecimale",
                 "Cambia Colore",
@@ -34,6 +33,7 @@ class OptionWindow(tk.Tk):
                 "Configurações",
                 "Idioma",
                 "Peso da Fonte",
+                "Opacidade",
                 "Cor do Texto",
                 "Código Hexadecimal",
                 "Mudar Cor",
@@ -43,6 +43,7 @@ class OptionWindow(tk.Tk):
                 "Configuraciones",
                 "Idioma",
                 "Peso de la Fuente",
+                "Opacidad",
                 "Color del Texto",
                 "Código Hexadecimal",
                 "Cambiar Color",
@@ -88,13 +89,35 @@ class OptionWindow(tk.Tk):
         # update selected font_weight
         weight_list.bind("<<ComboboxSelected>>", self.update_weight_var)
 
+        # opacity
+        # Create opacity selection list
+        self.opacity_var = tk.StringVar()
+        # tuple index 3 "Opacity"
+        opacity_label = tk.Label(self, text=f"{translation_option[language_set][3]}:")
+        opacity_label.pack(pady=5)
+        opacity_list = ttk.Combobox(
+            self,
+            values=[f"{i}%" for i in range(10, 101, 10)],  # 10% 20% 30%..... 100%
+            textvariable=self.opacity_var,
+        )
+        opacity_list.pack(pady=5)
+        # set opacity initial value from data base
+        self.opacity_var.set(settings["opacity"])
+        opacity_from_db = settings["opacity"]
+        opacity_dict = {
+            f"{i}%": (i // 10) for i in range(0, 101, 10)
+        }  # 10%:0 20%:1 30%:2..... 100%:9
+        opacity_list.current(opacity_dict[opacity_from_db])
+        # update selected font_opacity
+        opacity_list.bind("<<ComboboxSelected>>", self.update_opacity_var)
+
         # Create color picker
         self.color_var = tk.StringVar()
         self.color_var.set(
             settings.get("text_colour", "black")
         )  # Set text color from database
-        # tuple index 3 "Text Colour"
-        color_label = tk.Label(self, text=f"{translation_option[language_set][3]}:")
+        # tuple index 4 "Text Colour"
+        color_label = tk.Label(self, text=f"{translation_option[language_set][4]}:")
         color_label.pack(pady=5)
 
         # Color viewer
@@ -102,19 +125,19 @@ class OptionWindow(tk.Tk):
             self, bg=self.color_var.get(), width=45, height=45
         )
         self.color_viewer_frame.pack(pady=5)
-        # tuple index 4 "Hex Code"
-        self.hex_code_translation = translation_option[language_set][4]
+        # tuple index 5 "Hex Code"
+        self.hex_code_translation = translation_option[language_set][5]
         self.hex_code_label = tk.Label(
             self,
             text=f"{self.hex_code_translation}: {self.color_var.get()}",
             font=("Arial", 8),
         )
         self.hex_code_label.pack(pady=5)
-        # tuple index 5 "Change Color"
+        # tuple index 6 "Change Color"
 
         color_button = tk.Button(
             self,
-            text=f"{translation_option[language_set][5]}",
+            text=f"{translation_option[language_set][6]}",
             command=self.pick_color,
         )
         color_button.pack(pady=5)
@@ -122,10 +145,10 @@ class OptionWindow(tk.Tk):
         # Add OK and Cancel buttons
         ok_button = tk.Button(self, text="  OK  ", command=self.okay_button_click)
         ok_button.pack(side=tk.RIGHT, padx=(0, 60), anchor=tk.CENTER)
-        # tuple index 6 "Cancel"
+        # tuple index 7 "Cancel"
         cancel_button = tk.Button(
             self,
-            text=f"{translation_option[language_set][6]}",
+            text=f"{translation_option[language_set][7]}",
             command=self.cancel_button_click,
         )
         cancel_button.pack(side=tk.LEFT, padx=(60, 0), anchor=tk.CENTER)
@@ -139,7 +162,7 @@ class OptionWindow(tk.Tk):
         # print(f"Y option: {y_centered}")
 
         # Set the window size and position with equal padding
-        self.geometry(f"250x350+{x_centered}+{y_centered}")
+        self.geometry(f"250x450+{x_centered}+{y_centered}")
 
     def update_language_var(self, event):
         # Update language variable when a different language is selected
@@ -148,6 +171,10 @@ class OptionWindow(tk.Tk):
     def update_weight_var(self, event):
         # Update font weight variable when a different weight is selected
         self.weight_var.set(event.widget.get())
+
+    def update_opacity_var(self, event):
+
+        self.opacity_var.set(event.widget.get())
 
     def pick_color(self):
         color = colorchooser.askcolor()[1]
@@ -170,6 +197,7 @@ class OptionWindow(tk.Tk):
                     "language": self.language_var.get(),
                     "font_weight": self.weight_var.get(),
                     "text_colour": self.color_var.get(),
+                    "opacity": self.opacity_var.get(),
                 },
             )
         self.destroy()
