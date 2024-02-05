@@ -10,10 +10,7 @@ class DraggableWindow(tk.Tk):
         super().__init__()
 
         with DatabaseConnection() as db_connection:
-            # Connect to the SQLite database
-
-            # Create a table in the database
-            db_connection.create_table()
+            # Connect to the SQLite database and get settings
             self.settings = db_connection.get_settings()[0]
 
         self.title("")  # Set an empty title to remove the default label

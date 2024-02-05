@@ -1,16 +1,14 @@
 import sqlite3
-import os
+from pathlib import Path
+
+settings_path = Path("settings.sqlite")
 
 
 class DatabaseConnection:
-    def __init__(self, db_name="settings.sqlite"):
+    def __init__(self, db_name=settings_path):
         self.db_name = db_name
         self.connection = None
         self.cursor = None
-
-        # Check if the database file exists, create it if not
-        if not os.path.isfile(db_name):
-            self.create_sqlite_file()
 
     def __enter__(self):
         self.connect()
@@ -22,20 +20,23 @@ class DatabaseConnection:
         else:
             print("No connection to close.")
 
-    def create_sqlite_file(self):
-        try:
-            # Connect to the SQLite database (creates the file if it doesn't exist)
-            self.connection = sqlite3.connect(self.db_name)
-            self.cursor = self.connection.cursor()
-            self.create_table()
-        except sqlite3.Error as e:
-            print(f"Error creating SQLite file: {e}")
-        finally:
-            if self.connection is not None:
-                self.connection.close()
+    # def create_sqlite_file(self):
+    #     try:
+    #         # Connect to the SQLite database (creates the file if it doesn't exist)
+    #         self.connection = sqlite3.connect(self.db_name)
+    #         self.cursor = self.connection.cursor()
+    #         self.create_table()
+    #     except sqlite3.Error as e:
+    #         print(f"Error creating SQLite file: {e}")
+    #     finally:
+    #         if self.connection is not None:
+    #             self.connection.close()
 
     def connect(self):
         try:
+            # Check if table is created if not create it
+            if not settings_path.is_file():
+                self.create_table()
             # Connect to the SQLite database
             self.connection = sqlite3.connect(self.db_name)
             self.cursor = self.connection.cursor()
@@ -43,37 +44,40 @@ class DatabaseConnection:
             print(f"Error connecting to SQLite database: {e}")
 
     def create_table(self):
+        # Connect to the SQLite database (creates the file if it doesn't exist)
+        self.connection = sqlite3.connect(self.db_name)
+        self.cursor = self.connection.cursor()
         if self.cursor is not None:
             try:
                 # table creation query with default values
                 create_table_query = """
-                CREATE TABLE IF NOT EXISTS settings (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    language TEXT NOT NULL DEFAULT 'EN',
-                    font_weight TEXT NOT NULL DEFAULT 'NORMAL',
-                    text_colour TEXT NOT NULL DEFAULT '#000000',
-                    widget_colour TEXT NOT NULL DEFAULT '#ffffff',
-                    widget_x_position INTEGER NOT NULL DEFAULT 1624,
-                    widget_y_position INTEGER NOT NULL DEFAULT 75,
-                    option_window_x_position INTEGER NOT NULL DEFAULT 1370,
-                    option_window_y_position INTEGER NOT NULL DEFAULT 50,
-                    data_window_x_position INTEGER NOT NULL DEFAULT 0.0,
-                    data_window_y_position INTEGER NOT NULL DEFAULT 0.0,
-                    opacity TEXT NOT NULL DEFAULT '80%'
-                );                
-                """
+                    CREATE TABLE IF NOT EXISTS settings (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        language TEXT NOT NULL DEFAULT 'EN',
+                        font_weight TEXT NOT NULL DEFAULT 'NORMAL',
+                        text_colour TEXT NOT NULL DEFAULT '#000000',
+                        widget_colour TEXT NOT NULL DEFAULT '#ffffff',
+                        widget_x_position INTEGER NOT NULL DEFAULT 1624,
+                        widget_y_position INTEGER NOT NULL DEFAULT 75,
+                        option_window_x_position INTEGER NOT NULL DEFAULT 1370,
+                        option_window_y_position INTEGER NOT NULL DEFAULT 50,
+                        data_window_x_position INTEGER NOT NULL DEFAULT 0.0,
+                        data_window_y_position INTEGER NOT NULL DEFAULT 0.0,
+                        opacity TEXT NOT NULL DEFAULT '80%'
+                    );                
+                    """
 
                 insert_data_query = """
-                INSERT INTO settings (
-                    language, font_weight, text_colour,
-                    widget_colour, widget_x_position, widget_y_position,
-                    option_window_x_position, option_window_y_position,
-                    data_window_x_position, data_window_y_position,
-                    opacity
-                ) VALUES (
-                    'EN', 'NORMAL', '#000000', '#ffffff', 1624, 75, 1370, 50, 0.0, 0.0, '80%'
-                );
-                """
+                    INSERT INTO settings (
+                        language, font_weight, text_colour,
+                        widget_colour, widget_x_position, widget_y_position,
+                        option_window_x_position, option_window_y_position,
+                        data_window_x_position, data_window_y_position,
+                        opacity
+                    ) VALUES (
+                        'EN', 'NORMAL', '#000000', '#ffffff', 1624, 75, 1370, 50, 0.0, 0.0, '80%'
+                    );
+                    """
 
                 self.cursor.execute(create_table_query)
                 self.cursor.execute(insert_data_query)
