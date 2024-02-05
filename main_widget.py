@@ -42,20 +42,20 @@ class DraggableWindow(tk.Tk):
         # Set the window size and position with equal padding
         self.geometry(f"250x{size}+{x}+{y}")
 
-        # Default language
+        # language
         self.language = self.settings["language"]
 
         # Create a frame for centering labels
         frame = tk.Frame(self)
         frame.pack(expand=True, fill=tk.X)
 
-        translations = {
+        self.translations = {
             "EN": {"name": "Name", "date": "Date", "description": "Description"},
             "IT": {"name": "Nome", "date": "Data", "description": "Descrizione"},
             "BR": {"name": "Nome", "date": "Data", "description": "Descrição"},
             "ES": {"name": "Nombre", "date": "Fecha", "description": "Descripción"},
         }
-        translated_text = translations[self.language]
+        translated_text = self.translations[self.language]
 
         custom_font = ("Arial", 10, self.settings["font_weight"].lower())
 
@@ -154,8 +154,49 @@ class DraggableWindow(tk.Tk):
             with DatabaseConnection() as db_connection:
                 # get the updated settings
                 self.settings = db_connection.get_settings()[0]
-            self.option_window = OptionWindow(self.settings)
-            self.option_window.mainloop()
+            self.option_window = OptionWindow(self, self.settings)
+            self.option_window.lift()
+            # self.option_window.mainloop()
+
+    def reload_widget(self):
+        with DatabaseConnection() as db_connection:
+            # Connect to the SQLite database and get settings
+            self.settings = db_connection.get_settings()[0]
+
+        # language
+        self.language = self.settings["language"]
+
+        translated_text = self.translations[self.language]
+
+        custom_font = ("Arial", 10, self.settings["font_weight"].lower())
+
+        # Reload data from the CSV file
+        self.data = self.load_data("dates.csv")
+
+        # Find all entries with the nearest date
+        nearest_dates = self.find_nearest_dates()
+
+        # Destroy existing labels and frame
+        for widget in self.winfo_children():
+            widget.destroy()
+
+        # Create a new frame
+        frame = tk.Frame(self)
+        frame.pack(expand=True, fill=tk.X)
+
+        # Display information for all entries with the nearest date
+        for nearest_date, nearest_data in nearest_dates:
+            label_text = f"{translated_text['name']}: {nearest_data['name']}\n{translated_text['date']}: {nearest_data['date']}\n{translated_text['description']}: {nearest_data['description']}"
+            label = tk.Label(
+                frame,
+                text=label_text,
+                anchor="center",
+                justify="center",
+                wraplength=200,
+                font=custom_font,
+                fg=self.settings["text_colour"],
+            )
+            label.pack(pady=10)
 
 
 if __name__ == "__main__":

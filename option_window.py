@@ -5,8 +5,10 @@ from db_connection import DatabaseConnection
 
 
 class OptionWindow(tk.Tk):
-    def __init__(self, settings=None):
+    def __init__(self, parent, settings=None):
         super().__init__()
+
+        self.parent = parent
 
         translation_option = {
             "EN": (
@@ -200,6 +202,9 @@ class OptionWindow(tk.Tk):
                     "opacity": self.opacity_var.get(),
                 },
             )
+        # Reload the widget in the parent window
+        if self.parent:
+            self.parent.reload_widget()
         self.destroy()
 
     def cancel_button_click(self):
