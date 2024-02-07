@@ -2,6 +2,7 @@ import tkinter as tk
 from datetime import datetime, timedelta
 import csv
 from option_window import OptionWindow
+from add_date_window import AddDateWindow
 from db_connection import DatabaseConnection
 
 
@@ -61,7 +62,7 @@ class DraggableWindow(tk.Tk):
 
         # Display information for all entries with the nearest date
         for nearest_date, nearest_data in nearest_dates:
-            label_text = f"{translated_text['name']}: {nearest_data['name']}\n{translated_text['date']}: {nearest_data['date']}\n{translated_text['description']}: {nearest_data['description']}"
+            label_text = f"{translated_text['name']}: {nearest_data['Name']}\n{translated_text['date']}: {nearest_data['Date']}\n{translated_text['description']}: {nearest_data['Description']}"
             label = tk.Label(
                 frame,
                 text=label_text,
@@ -82,6 +83,7 @@ class DraggableWindow(tk.Tk):
         # Bind key events
         self.bind("<Delete>", self.close_widget)
         self.bind("o", self.open_option_window)
+        self.bind("a", self.open_add_date_window)
 
     def load_data(self, file_path):
         data = []
@@ -97,9 +99,9 @@ class DraggableWindow(tk.Tk):
     def find_nearest_dates(self):
         today = datetime.now().date()
         future_dates = [
-            (datetime.strptime(x["date"], "%d-%b").date(), x)
+            (datetime.strptime(x["Date"], "%d-%b").date(), x)
             for x in self.data
-            if datetime.strptime(x["date"], "%d-%b").date().replace(year=today.year)
+            if datetime.strptime(x["Date"], "%d-%b").date().replace(year=today.year)
             >= today
         ]
         if future_dates:
@@ -158,6 +160,20 @@ class DraggableWindow(tk.Tk):
             self.option_window.lift()
             # self.option_window.mainloop()
 
+    def open_add_date_window(self, event):
+        if (
+            hasattr(self, "add_date_window")
+            and self.add_date_window is not None
+            and self.add_date_window.is_open()
+        ):
+            # If the add_date window is open, close it
+            self.add_date_window.destroy()
+            self.add_date_window = None
+        else:
+            self.add_date_window = AddDateWindow(self, self.settings)
+            self.add_date_window.lift()
+            # self.add_date_window.mainloop()
+
     def reload_widget(self):
         with DatabaseConnection() as db_connection:
             # Connect to the SQLite database and get settings
@@ -186,7 +202,7 @@ class DraggableWindow(tk.Tk):
 
         # Display information for all entries with the nearest date
         for nearest_date, nearest_data in nearest_dates:
-            label_text = f"{translated_text['name']}: {nearest_data['name']}\n{translated_text['date']}: {nearest_data['date']}\n{translated_text['description']}: {nearest_data['description']}"
+            label_text = f"{translated_text['name']}: {nearest_data['Name']}\n{translated_text['date']}: {nearest_data['Date']}\n{translated_text['description']}: {nearest_data['Description']}"
             label = tk.Label(
                 frame,
                 text=label_text,
