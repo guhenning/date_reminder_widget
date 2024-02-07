@@ -121,20 +121,20 @@ class AddDateWindow(tk.Tk):
         )
         description = self.description_entry.get().strip()
 
-        if name and date and description:
+        if name and date:
             # Add row to CSV file
             with open(csv_path, mode="a", newline="") as file:
                 writer = csv.writer(file)
                 writer.writerow([name, date, description])
             # Reload the widget in the parent window
             # Show temporary text "New Date Added"
-            self.show_temporary_text("New Date Added")
+            self.show_temporary_text()
             if self.parent:
                 self.parent.reload_widget()
 
-    def show_temporary_text(self, text):
+    def show_temporary_text(self):
         # Create a label widget to display temporary text
-        label = tk.Label(self, text=f"{self.translation_option[self.language_set][1]}:")
+        label = tk.Label(self, text=f"{self.translation_option[self.language_set][5]}!")
         label.place(relx=0.5, rely=0.80, anchor=tk.CENTER)
 
         # Schedule the label to be removed after 2 seconds
