@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import csv
 from option_window import OptionWindow
 from add_date_window import AddDateWindow
+from csv_editor import CSVEditorWindow
 from db_connection import DatabaseConnection
 
 
@@ -84,6 +85,7 @@ class DraggableWindow(tk.Tk):
         self.bind("<Delete>", self.close_widget)
         self.bind("o", self.open_option_window)
         self.bind("a", self.open_add_date_window)
+        self.bind("e", self.open_edit_dates_window)
 
     def load_data(self, file_path):
         data = []
@@ -173,6 +175,24 @@ class DraggableWindow(tk.Tk):
             self.add_date_window = AddDateWindow(self, self.settings)
             self.add_date_window.lift()
             # self.add_date_window.mainloop()
+
+    def open_edit_dates_window(self, event):
+        if (
+            hasattr(self, "edit_dates_window")
+            and self.edit_dates_window is not None
+            and self.edit_dates_window.is_open()
+        ):
+            # If the option window is open, close it
+            print("closing")
+            self.edit_dates_window.destroy()
+            self.edit_dates_window = None
+        else:
+            print("opening")
+            try:
+                self.edit_dates_window = CSVEditorWindow(self)
+                self.edit_dates_window.lift()
+            except Exception as e:
+                print("Error:", e)
 
     def reload_widget(self):
         with DatabaseConnection() as db_connection:
