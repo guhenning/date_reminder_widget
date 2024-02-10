@@ -26,6 +26,16 @@ class DraggableWindow(tk.Tk):
         # Load data from the CSV file
         self.data = self.load_data("dates.csv")
 
+        # language
+        self.language = self.settings["language"]
+        self.translations = {
+            "EN": {"name": "Name", "date": "Date", "description": "Description"},
+            "IT": {"name": "Nome", "date": "Data", "description": "Descrizione"},
+            "BR": {"name": "Nome", "date": "Data", "description": "Descrição"},
+            "ES": {"name": "Nombre", "date": "Fecha", "description": "Descripción"},
+        }
+        self.translated_text = self.translations[self.language]
+
         # Find all entries with the nearest date
         nearest_dates = self.find_nearest_dates()
 
@@ -44,26 +54,15 @@ class DraggableWindow(tk.Tk):
         # Set the window size and position with equal padding
         self.geometry(f"250x{size}+{x}+{y}")
 
-        # language
-        self.language = self.settings["language"]
-
         # Create a frame for centering labels
         frame = tk.Frame(self)
         frame.pack(expand=True, fill=tk.X)
-
-        self.translations = {
-            "EN": {"name": "Name", "date": "Date", "description": "Description"},
-            "IT": {"name": "Nome", "date": "Data", "description": "Descrizione"},
-            "BR": {"name": "Nome", "date": "Data", "description": "Descrição"},
-            "ES": {"name": "Nombre", "date": "Fecha", "description": "Descripción"},
-        }
-        translated_text = self.translations[self.language]
 
         custom_font = ("Arial", 10, self.settings["font_weight"].lower())
 
         # Display information for all entries with the nearest date
         for nearest_date, nearest_data in nearest_dates:
-            label_text = f"{translated_text['name']}: {nearest_data['Name']}\n{translated_text['date']}: {nearest_data['Date']}\n{translated_text['description']}: {nearest_data['Description']}"
+            label_text = f"{self.translated_text['name']}: {nearest_data[self.translated_text['name']]}\n{self.translated_text['date']}: {nearest_data[self.translated_text['name']]}\n{self.translated_text['description']}: {nearest_data[self.translated_text['name']]}"
             label = tk.Label(
                 frame,
                 text=label_text,
@@ -101,9 +100,11 @@ class DraggableWindow(tk.Tk):
     def find_nearest_dates(self):
         today = datetime.now().date()
         future_dates = [
-            (datetime.strptime(x["Date"], "%d-%b").date(), x)
+            (datetime.strptime(x[self.translated_text["date"]], "%d-%b").date(), x)
             for x in self.data
-            if datetime.strptime(x["Date"], "%d-%b").date().replace(year=today.year)
+            if datetime.strptime(x[self.translated_text["date"]], "%d-%b")
+            .date()
+            .replace(year=today.year)
             >= today
         ]
         if future_dates:
@@ -177,22 +178,20 @@ class DraggableWindow(tk.Tk):
             # self.add_date_window.mainloop()
 
     def open_edit_dates_window(self, event):
-        if (
+        if not (
             hasattr(self, "edit_dates_window")
             and self.edit_dates_window is not None
             and self.edit_dates_window.is_open()
         ):
-            # If the option window is open, close it
-            print("closing")
-            self.edit_dates_window.destroy()
-            self.edit_dates_window = None
-        else:
-            print("opening")
+            #     # If the option window is open, close it
+            #     self.edit_dates_window.destroy()
+            #     self.edit_dates_window = None
+            # else:
             try:
                 self.edit_dates_window = CSVEditorWindow(self, self.settings)
                 self.edit_dates_window.lift()
             except Exception as e:
-                print("Error:", e)
+                print(f"Error: {e}")
 
     def reload_widget(self):
         with DatabaseConnection() as db_connection:
@@ -200,9 +199,10 @@ class DraggableWindow(tk.Tk):
             self.settings = db_connection.get_settings()[0]
 
         # language
-        self.language = self.settings["language"]
-
-        translated_text = self.translations[self.language]
+        if self.language != self.settings["language"]:
+            self.language = self.settings["language"]
+            self.translated_text = self.translations[self.language]
+            self.update_first_row_language("dates.csv")
 
         custom_font = ("Arial", 10, self.settings["font_weight"].lower())
 
@@ -222,7 +222,7 @@ class DraggableWindow(tk.Tk):
 
         # Display information for all entries with the nearest date
         for nearest_date, nearest_data in nearest_dates:
-            label_text = f"{translated_text['name']}: {nearest_data['Name']}\n{translated_text['date']}: {nearest_data['Date']}\n{translated_text['description']}: {nearest_data['Description']}"
+            label_text = f"{self.translated_text['name']}: {nearest_data[self.translated_text['name']]}\n{self.translated_text['date']}: {nearest_data[self.translated_text['name']]}\n{self.translated_text['description']}: {nearest_data[self.translated_text['name']]}"
             label = tk.Label(
                 frame,
                 text=label_text,
@@ -233,6 +233,20 @@ class DraggableWindow(tk.Tk):
                 fg=self.settings["text_colour"],
             )
             label.pack(pady=10)
+
+    def update_first_row_language(self, csv_path):
+        with open(csv_path, "r", encoding="utf-8") as csvfile:
+            lines = csvfile.readlines()
+
+        # Update the first row with translated column headers
+        if lines:
+            lines[0] = (
+                f"{self.translated_text['name']},{self.translated_text['date']},{self.translated_text['description']}\n"
+            )
+
+            # Write the updated contents back to the CSV file
+            with open(csv_path, "w", encoding="utf-8") as csvfile:
+                csvfile.writelines(lines)
 
 
 if __name__ == "__main__":

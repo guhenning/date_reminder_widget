@@ -222,7 +222,7 @@ class CSVEditorWindow(tk.Toplevel):
         rows = []
 
         # get array size & get contents of rows
-        with open(filename, "r") as csvfile:
+        with open(filename, "r", encoding="utf-8") as csvfile:
             rd = csv.reader(csvfile, delimiter=",", quotechar='"')
             for row in rd:
                 ary.append([])
@@ -291,7 +291,7 @@ class CSVEditorWindow(tk.Toplevel):
         rows = []
 
         # get array size & get contents of rows
-        with open(csv_path, "r") as csvfile:
+        with open(csv_path, "r", encoding="utf-8") as csvfile:
             rd = csv.reader(csvfile, delimiter=",", quotechar='"')
             for row in rd:
                 ary.append([])
@@ -367,7 +367,7 @@ class CSVEditorWindow(tk.Toplevel):
             for j in range(len(self.currentCells[0])):
                 vals.append(self.currentCells[i][j].get(1.0, END).strip())
 
-        with open(filename, "w") as csvfile:
+        with open(filename, "w", encoding="utf-8") as csvfile:
             for rw in range(len(self.currentCells)):
                 row = ""
                 for i in range(len(self.currentCells[0])):
@@ -387,7 +387,7 @@ class CSVEditorWindow(tk.Toplevel):
             for j in range(len(self.currentCells[0])):
                 vals.append(self.currentCells[i][j].get(1.0, END).strip())
 
-        with open(csv_path, "w") as csvfile:
+        with open(csv_path, "w", encoding="utf-8") as csvfile:
             for rw in range(len(self.currentCells)):
                 row = ""
                 for i in range(len(self.currentCells[0])):
