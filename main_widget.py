@@ -5,6 +5,10 @@ from option_window import OptionWindow
 from add_date_window import AddDateWindow
 from csv_editor import CSVEditorWindow
 from db_connection import DatabaseConnection
+from utils import resize_icon
+from pathlib import Path
+
+icons_path = Path("icons")
 
 
 class DraggableWindow(tk.Tk):
@@ -46,11 +50,6 @@ class DraggableWindow(tk.Tk):
         x = self.settings["widget_x_position"]  # default 275
         y = self.settings["widget_y_position"]  #  default 50
 
-        screen_width = self.winfo_screenwidth()
-        screen_height = self.winfo_screenheight()
-        # x  # right margin 275
-        # y  # top margin 50
-
         # Set the window size and position with equal padding
         self.geometry(f"250x{size}+{x}+{y}")
 
@@ -83,14 +82,57 @@ class DraggableWindow(tk.Tk):
         self.button_frame.place(relx=1, rely=0, anchor="ne", relwidth=0.1)
 
         # Create four square buttons and add them to the frame
-        button_texts = ["1", "2", "3", "4"]  # Placeholder texts for buttons
-        self.buttons = []
-        for text in button_texts:
-            button = tk.Button(self.button_frame, text=text, width=2, height=1)
-            button.pack(
-                fill=tk.X, padx=0, pady=0, ipadx=0, ipady=0
-            )  # Adjust padding and internal padding as needed
-            self.buttons.append(button)
+        # Plus Button
+        self.plus_button = tk.Button(
+            self.button_frame, width=2, height=20, command=self.open_add_date_window
+        )
+        self.plus_button.pack(fill=tk.X, padx=0, pady=0, ipadx=0, ipady=0)
+
+        # Edit Button
+        self.edit_button = tk.Button(
+            self.button_frame, width=2, height=20, command=self.open_edit_dates_window
+        )
+        self.edit_button.pack(fill=tk.X, padx=0, pady=0, ipadx=0, ipady=0)
+
+        # Settings Button
+        self.settings_button = tk.Button(
+            self.button_frame, width=2, height=20, command=self.open_option_window
+        )
+        self.settings_button.pack(fill=tk.X, padx=0, pady=0, ipadx=0, ipady=0)
+
+        # Close Button
+        self.close_button = tk.Button(
+            self.button_frame, width=2, height=20, command=self.close_widget
+        )
+        self.close_button.pack(fill=tk.X, padx=0, pady=0, ipadx=0, ipady=0)
+
+        # Resize icons to fit button
+        self.plus_icon = resize_icon(
+            icons_path / "plus_icon.png",
+            self.plus_button.winfo_reqwidth(),
+            self.plus_button.winfo_reqwidth(),
+        )
+        self.edit_icon = resize_icon(
+            icons_path / "edit_icon.png",
+            self.edit_button.winfo_reqwidth(),
+            self.edit_button.winfo_reqwidth(),
+        )
+        self.settings_icon = resize_icon(
+            icons_path / "settings_icon.png",
+            self.settings_button.winfo_reqwidth(),
+            self.settings_button.winfo_reqwidth(),
+        )
+        self.close_icon = resize_icon(
+            icons_path / "close_icon.png",
+            self.close_button.winfo_reqwidth(),
+            self.close_button.winfo_reqwidth(),
+        )
+
+        # Set the icons to the buttons
+        self.plus_button.config(image=self.plus_icon)
+        self.edit_button.config(image=self.edit_icon)
+        self.settings_button.config(image=self.settings_icon)
+        self.close_button.config(image=self.close_icon)
 
         # Initially hide the buttons
         self.hide_buttons()
@@ -169,10 +211,10 @@ class DraggableWindow(tk.Tk):
             )
 
     # closing the widget
-    def close_widget(self, event):
+    def close_widget(self, event=None):
         self.destroy()
 
-    def open_option_window(self, event):
+    def open_option_window(self, event=None):
         if (
             hasattr(self, "option_window")
             and self.option_window is not None
@@ -190,7 +232,7 @@ class DraggableWindow(tk.Tk):
             self.option_window.lift()
             # self.option_window.mainloop()
 
-    def open_add_date_window(self, event):
+    def open_add_date_window(self, event=None):
         if not (
             hasattr(self, "add_date_window")
             and self.add_date_window is not None
@@ -204,7 +246,7 @@ class DraggableWindow(tk.Tk):
             self.add_date_window.lift()
             # self.add_date_window.mainloop()
 
-    def open_edit_dates_window(self, event):
+    def open_edit_dates_window(self, event=None):
         if not (
             hasattr(self, "edit_dates_window")
             and self.edit_dates_window is not None
@@ -283,7 +325,7 @@ class DraggableWindow(tk.Tk):
 
     def hide_buttons(self, event=None):
         # Hide the buttons by moving them to the right side
-        self.button_frame.place_configure(relx=1)
+        self.button_frame.place_configure(relx=1.2)
 
     #################################################################################
 

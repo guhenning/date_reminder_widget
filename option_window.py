@@ -2,13 +2,18 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import colorchooser
 from db_connection import DatabaseConnection
+from pathlib import Path
 
 
-class OptionWindow(tk.Tk):
+class OptionWindow(tk.Toplevel):
     def __init__(self, parent, settings=None):
         super().__init__()
 
         self.parent = parent
+        icons_path = Path("icons")
+        settings_icon = tk.PhotoImage(file=icons_path / "settings_icon.png")
+        # Set window icon
+        self.iconphoto(True, settings_icon)
 
         translation_option = {
             "EN": (

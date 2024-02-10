@@ -6,7 +6,6 @@ import csv
 from pathlib import Path
 import tkinter as tk
 
-csv_path = Path("dates.csv")
 
 ##
 # - 2024 Gustavo Henning gustavo.henning@outlook.com
@@ -21,7 +20,7 @@ class CSVEditorWindow(tk.Toplevel):
     def __init__(self, parent, settings=None):
         super().__init__()
         self.parent = parent
-
+        self.csv_path = Path("dates.csv")
         self.translation_option = {
             "EN": (
                 "Editor",
@@ -50,6 +49,10 @@ class CSVEditorWindow(tk.Toplevel):
         }
 
         self.language_set = settings["language"]
+        icons_path = Path("icons")
+        edit_icon = tk.PhotoImage(file=icons_path / "edit_icon.png")
+        # Set window icon
+        self.iconphoto(True, edit_icon)
 
         self.createDefaultWidgets()
         # Set Title
@@ -291,7 +294,7 @@ class CSVEditorWindow(tk.Toplevel):
         rows = []
 
         # get array size & get contents of rows
-        with open(csv_path, "r", encoding="utf-8") as csvfile:
+        with open(self.csv_path, "r", encoding="utf-8") as csvfile:
             rd = csv.reader(csvfile, delimiter=",", quotechar='"')
             for row in rd:
                 ary.append([])
@@ -387,7 +390,7 @@ class CSVEditorWindow(tk.Toplevel):
             for j in range(len(self.currentCells[0])):
                 vals.append(self.currentCells[i][j].get(1.0, END).strip())
 
-        with open(csv_path, "w", encoding="utf-8") as csvfile:
+        with open(self.csv_path, "w", encoding="utf-8") as csvfile:
             for rw in range(len(self.currentCells)):
                 row = ""
                 for i in range(len(self.currentCells[0])):
