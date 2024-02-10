@@ -74,6 +74,33 @@ class DraggableWindow(tk.Tk):
             )
             label.pack(pady=10)
 
+        ##############################################################################
+        # Hover Buttons
+        # Create a frame for the buttons
+        self.button_frame = tk.Frame(
+            self, bg="white"
+        )  # Adjust background color as needed
+        self.button_frame.place(relx=1, rely=0, anchor="ne", relwidth=0.1)
+
+        # Create four square buttons and add them to the frame
+        button_texts = ["1", "2", "3", "4"]  # Placeholder texts for buttons
+        self.buttons = []
+        for text in button_texts:
+            button = tk.Button(self.button_frame, text=text, width=2, height=1)
+            button.pack(
+                fill=tk.X, padx=0, pady=0, ipadx=0, ipady=0
+            )  # Adjust padding and internal padding as needed
+            self.buttons.append(button)
+
+        # Initially hide the buttons
+        self.hide_buttons()
+
+        # Bind events to show and hide the buttons
+        self.bind("<Enter>", self.show_buttons)
+        self.bind("<Leave>", self.hide_buttons)
+
+        ##############################################################################
+
         # Bind mouse events for dragging to the entire window
         self.bind("<ButtonPress-1>", self.on_drag_start)
         self.bind("<B1-Motion>", self.on_drag_motion)
@@ -247,6 +274,18 @@ class DraggableWindow(tk.Tk):
             # Write the updated contents back to the CSV file
             with open(csv_path, "w", encoding="utf-8") as csvfile:
                 csvfile.writelines(lines)
+
+    ################################################################################
+    # Hover Buttons
+    def show_buttons(self, event):
+        # Adjust the position to show the buttons with a slight offset to the left
+        self.button_frame.place_configure(relx=0.9)
+
+    def hide_buttons(self, event=None):
+        # Hide the buttons by moving them to the right side
+        self.button_frame.place_configure(relx=1)
+
+    #################################################################################
 
 
 if __name__ == "__main__":
