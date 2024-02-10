@@ -20,49 +20,41 @@ csv_path = Path("dates.csv")
 class CSVEditorWindow(tk.Toplevel):
     def __init__(self, parent):
         super().__init__(parent)
+        self.parent = parent
 
-        # Set the window's geometry to the center of the screen
-        screen_width = self.winfo_screenwidth()
-        screen_height = self.winfo_screenheight()
-        window_width = 400  # Adjust as needed
-        window_height = 300  # Adjust as needed
-        x = (screen_width - window_width) // 2
-        y = (screen_height - window_height) // 2
-        self.parent.geometry(f"{window_width}x{window_height}+{x}+{y}")
-
+        self.createDefaultWidgets()
+        # Set Title
+        self.title("Editor")
         ## CODE ENTRY ###
         default_font = tkFont.nametofont("TkTextFont")
         default_font.configure(family="Helvetica")
 
         self.option_add("*Font", default_font)
         self.option_add("*Font", default_font)
+        # Load Date Cels
         self.loadCells()
-        menubar = Menu(self)
 
+        # Create Menu
+        menubar = Menu(self)
         filemenu = Menu(menubar, tearoff=0)
+        filemenu.add_command(label="Save", command=self.save)
+        filemenu.add_command(label="Exit", command=self.close)
+        menubar.add_cascade(label="File", menu=filemenu)
+        menubar.add_command(label="Exit", command=self.close)
+        self.config(menu=menubar)
+
+        # Bind esc keyboard to close window
+        self.bind("<Escape>", self.close)
+
         # filemenu.add_command(label="New", command=app.newCells)  # add save dialog
         # add save dialog
         #  filemenu.add_command(label="Open", command=app.loadCells)
         # filemenu.add_command(label="Open File", command=app.openAndloadCells)
-        filemenu.add_command(label="Save", command=self.save)
         # filemenu.add_command(label="Save as", command=app.saveAs)
-        filemenu.add_command(label="Exit", command=self.quit)
-
-        menubar.add_cascade(label="File", menu=filemenu)
-        menubar.add_command(label="Exit", command=self.quit)
-
-        self.master.title("Editor")
-        self.master.config(menu=menubar)
-
-        self.parent = parent
 
     cellList = []
     currentCells = []
     currentCell = None
-
-    def __init__(self, master=None):
-        Frame.__init__(self, master)
-        self.createDefaultWidgets()
 
     def focus_tab(self, event):
         event.widget.tk_focusNext().focus()
@@ -241,7 +233,7 @@ class CSVEditorWindow(tk.Toplevel):
 
                 if i == 0:
                     tmp.config(font=("Helvetica", 10, tkFont.BOLD))
-                    tmp.config(relief=FLAT, bg=self.master.cget("bg"))
+                    tmp.config(relief=FLAT, bg=self.cget("bg"))
 
                 loadCells[i][j] = tmp
                 tmp.focus_force()
@@ -310,7 +302,7 @@ class CSVEditorWindow(tk.Toplevel):
 
                 if i == 0:
                     tmp.config(font=("Helvetica", 10, tkFont.BOLD))
-                    tmp.config(relief=FLAT, bg=self.master.cget("bg"))
+                    tmp.config(relief=FLAT, bg=self.cget("bg"))
 
                 loadCells[i][j] = tmp
                 tmp.focus_force()
@@ -374,8 +366,11 @@ class CSVEditorWindow(tk.Toplevel):
         except tk.TclError:
             return False
 
+    def close(self, event=None):
+        self.destroy()
 
-# End Application Class #
+
+# End Class #
 
 
 # Begin functions #

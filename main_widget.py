@@ -163,15 +163,15 @@ class DraggableWindow(tk.Tk):
             # self.option_window.mainloop()
 
     def open_add_date_window(self, event):
-        if (
+        if not (
             hasattr(self, "add_date_window")
             and self.add_date_window is not None
             and self.add_date_window.is_open()
         ):
-            # If the add_date window is open, close it
-            self.add_date_window.destroy()
-            self.add_date_window = None
-        else:
+            #     # If the add_date window is open, close it
+            #     self.add_date_window.destroy()
+            #     self.add_date_window = None
+            # else:
             self.add_date_window = AddDateWindow(self, self.settings)
             self.add_date_window.lift()
             # self.add_date_window.mainloop()
