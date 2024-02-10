@@ -1,5 +1,5 @@
 import tkinter as tk
-from datetime import datetime, timedelta
+from datetime import datetime
 import csv
 from option_window import OptionWindow
 from add_date_window import AddDateWindow
