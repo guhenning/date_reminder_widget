@@ -43,15 +43,7 @@ class DraggableWindow(tk.Tk):
         # Find all entries with the nearest date
         nearest_dates = self.find_nearest_dates()
 
-        # Set the initial size
-        size = len(nearest_dates) * 100  # 100 padding for each item
-
-        # Calculate the widget start position
-        x = self.settings["widget_x_position"]  # default 275
-        y = self.settings["widget_y_position"]  #  default 50
-
-        # Set the window size and position with equal padding
-        self.geometry(f"250x{size}+{x}+{y}")
+        self.set_widget_size(len(nearest_dates))
 
         # Create a frame for centering labels
         frame = tk.Frame(self)
@@ -75,68 +67,8 @@ class DraggableWindow(tk.Tk):
 
         ##############################################################################
         # Hover Buttons
-        # Create a frame for the buttons
-        self.button_frame = tk.Frame(
-            self, bg="white"
-        )  # Adjust background color as needed
-        self.button_frame.place(relx=1, rely=0, anchor="ne", relwidth=0.1)
-
-        # Create four square buttons and add them to the frame
-        # Plus Button
-        self.plus_button = tk.Button(
-            self.button_frame, width=2, height=20, command=self.open_add_date_window
-        )
-        self.plus_button.pack(fill=tk.X, padx=0, pady=0, ipadx=0, ipady=0)
-
-        # Edit Button
-        self.edit_button = tk.Button(
-            self.button_frame, width=2, height=20, command=self.open_edit_dates_window
-        )
-        self.edit_button.pack(fill=tk.X, padx=0, pady=0, ipadx=0, ipady=0)
-
-        # Settings Button
-        self.settings_button = tk.Button(
-            self.button_frame, width=2, height=20, command=self.open_option_window
-        )
-        self.settings_button.pack(fill=tk.X, padx=0, pady=0, ipadx=0, ipady=0)
-
-        # Close Button
-        self.close_button = tk.Button(
-            self.button_frame, width=2, height=20, command=self.close_widget
-        )
-        self.close_button.pack(fill=tk.X, padx=0, pady=0, ipadx=0, ipady=0)
-
-        # Resize icons to fit button
-        self.plus_icon = resize_icon(
-            icons_path / "plus_icon.png",
-            self.plus_button.winfo_reqwidth(),
-            self.plus_button.winfo_reqwidth(),
-        )
-        self.edit_icon = resize_icon(
-            icons_path / "edit_icon.png",
-            self.edit_button.winfo_reqwidth(),
-            self.edit_button.winfo_reqwidth(),
-        )
-        self.settings_icon = resize_icon(
-            icons_path / "settings_icon.png",
-            self.settings_button.winfo_reqwidth(),
-            self.settings_button.winfo_reqwidth(),
-        )
-        self.close_icon = resize_icon(
-            icons_path / "close_icon.png",
-            self.close_button.winfo_reqwidth(),
-            self.close_button.winfo_reqwidth(),
-        )
-
-        # Set the icons to the buttons
-        self.plus_button.config(image=self.plus_icon)
-        self.edit_button.config(image=self.edit_icon)
-        self.settings_button.config(image=self.settings_icon)
-        self.close_button.config(image=self.close_icon)
-
-        # Initially hide the buttons
-        self.hide_buttons()
-
+        # Create a frame the buttons
+        self.initialize_hover_buttons()
         # Bind events to show and hide the buttons
         self.bind("<Enter>", self.show_buttons)
         self.bind("<Leave>", self.hide_buttons)
@@ -214,6 +146,11 @@ class DraggableWindow(tk.Tk):
     def close_widget(self, event=None):
         self.destroy()
 
+    def close_draggable_window(self):
+        # Close the draggable window instance
+        # Needs to be another function if not it closes the other window open
+        self.destroy()
+
     def open_option_window(self, event=None):
         if (
             hasattr(self, "option_window")
@@ -280,6 +217,7 @@ class DraggableWindow(tk.Tk):
 
         # Find all entries with the nearest date
         nearest_dates = self.find_nearest_dates()
+        self.set_widget_size(len(nearest_dates))
 
         # Destroy existing labels and frame
         for widget in self.winfo_children():
@@ -302,6 +240,7 @@ class DraggableWindow(tk.Tk):
                 fg=self.settings["text_colour"],
             )
             label.pack(pady=10)
+        self.initialize_hover_buttons()
 
     def update_first_row_language(self, csv_path):
         with open(csv_path, "r", encoding="utf-8") as csvfile:
@@ -319,6 +258,97 @@ class DraggableWindow(tk.Tk):
 
     ################################################################################
     # Hover Buttons
+
+    def initialize_hover_buttons(self):
+        # Create a frame for the buttons
+        self.button_frame = tk.Frame(
+            self, bg="white"
+        )  # Adjust background color as needed
+        self.button_frame.place(relx=1, rely=0, anchor="ne", relwidth=0.1)
+
+        # Create four square buttons and add them to the frame
+        # Plus Button
+        self.plus_button = tk.Button(
+            self.button_frame,
+            width=2,
+            height=25,
+            command=self.open_add_date_window,
+            bg="white",  # Set background color to white (or any color that matches your background)
+            bd=0,  # Set border width to 0 to remove the border
+            highlightthickness=0,  # Set highlightthickness to 0 to remove the highlight
+            activebackground="white",
+        )
+        self.plus_button.pack(fill=tk.X, padx=0, pady=0, ipadx=0, ipady=0)
+
+        # Edit Button
+        self.edit_button = tk.Button(
+            self.button_frame,
+            width=2,
+            height=25,
+            command=self.open_edit_dates_window,
+            bg="white",  # Set background color to white (or any color that matches your background)
+            bd=0,  # Set border width to 0 to remove the border
+            highlightthickness=0,  # Set highlightthickness to 0 to remove the highlight
+            activebackground="white",
+        )
+        self.edit_button.pack(fill=tk.X, padx=0, pady=0, ipadx=0, ipady=0)
+
+        # Settings Button
+        self.settings_button = tk.Button(
+            self.button_frame,
+            width=2,
+            height=25,
+            command=self.open_option_window,
+            bg="white",  # Set background color to white (or any color that matches your background)
+            bd=0,  # Set border width to 0 to remove the border
+            highlightthickness=0,  # Set highlightthickness to 0 to remove the highlight
+            activebackground="white",
+        )
+        self.settings_button.pack(fill=tk.X, padx=0, pady=0, ipadx=0, ipady=0)
+
+        # Close Button
+        self.close_button = tk.Button(
+            self.button_frame,
+            width=2,
+            height=25,
+            command=self.close_draggable_window,
+            bg="white",  # Set background color to white (or any color that matches your background)
+            bd=0,  # Set border width to 0 to remove the border
+            highlightthickness=0,  # Set highlightthickness to 0 to remove the highlight
+            activebackground="white",
+        )
+        self.close_button.pack(fill=tk.X, padx=0, pady=0, ipadx=0, ipady=0)
+
+        # Resize icons to fit button
+        self.plus_icon = resize_icon(
+            icons_path / "plus_icon.png",
+            self.plus_button.winfo_reqwidth(),
+            self.plus_button.winfo_reqwidth(),
+        )
+        self.edit_icon = resize_icon(
+            icons_path / "edit_icon.png",
+            self.edit_button.winfo_reqwidth(),
+            self.edit_button.winfo_reqwidth(),
+        )
+        self.settings_icon = resize_icon(
+            icons_path / "settings_icon.png",
+            self.settings_button.winfo_reqwidth(),
+            self.settings_button.winfo_reqwidth(),
+        )
+        self.close_icon = resize_icon(
+            icons_path / "close_icon.png",
+            self.close_button.winfo_reqwidth(),
+            self.close_button.winfo_reqwidth(),
+        )
+
+        # Set the icons to the buttons
+        self.plus_button.config(image=self.plus_icon)
+        self.edit_button.config(image=self.edit_icon)
+        self.settings_button.config(image=self.settings_icon)
+        self.close_button.config(image=self.close_icon)
+        # Initiallu hide buttons
+        self.hide_buttons()
+
     def show_buttons(self, event):
         # Adjust the position to show the buttons with a slight offset to the left
         self.button_frame.place_configure(relx=1)
@@ -326,6 +356,20 @@ class DraggableWindow(tk.Tk):
     def hide_buttons(self, event=None):
         # Hide the buttons by moving them to the right side
         self.button_frame.place_configure(relx=1.2)
+
+    def set_widget_size(self, lenth):
+        # Set the initial size
+        if lenth == 0:
+            size = 100
+        else:
+            size = lenth * 100  # 100 padding for each item
+
+        # Calculate the widget start position
+        x = self.settings["widget_x_position"]  # default 275
+        y = self.settings["widget_y_position"]  #  default 50
+
+        # Set the window size and position with equal padding
+        self.geometry(f"250x{size}+{x}+{y}")
 
     #################################################################################
 
