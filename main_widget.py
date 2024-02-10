@@ -262,8 +262,6 @@ class DraggableWindow(tk.Tk):
         frame.pack(expand=True, fill=tk.X)
 
         # if len is 0 dont have any dates on file as user to add!
-        print("here")
-        print(nearest_dates)
         if len(nearest_dates) == 0:
             # Display information for all entries with the nearest date
             label = tk.Label(
