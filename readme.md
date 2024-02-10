@@ -2,85 +2,74 @@
 
 ## Gustavo Henning
 
-## gustavo.henning@outlook.com
+Contact: gustavo.henning@outlook.com
 
-# A App for Reminding Important Dates like Birhdays or Annyversaris
+---
 
-## Commands:
+An application for reminding important dates such as birthdays or anniversaries.
 
-## To run those open cmd and type the name of the file Ex.: runner.bat
+### Commands:
 
-- update_requirements.bat It get all the list of all the necessary modules of the project and update the requirements.txt.
+To run these commands, open CMD and type the name of the file, e.g., `runner.bat`
 
-- runner.bat Is used for an easy run of a file default is main_widget but can be commented with :: and uncomment the call for another file.
+- `update_requirements.bat`: Retrieves the list of all necessary modules for the project and updates the `requirements.txt` file.
+- `runner.bat`: Facilitates the easy run of a file. The default file is `main_widget`, but you can comment out the call and uncomment the call for another file.
 
-- make_exe.bat It generates the .exe file again with the current project and import necessary files to the dist folder where is the final .exe file.
+- `make_exe.bat`: Generates the `.exe` file again with the current project and imports necessary files to the `dist` folder where the final `.exe` file is located.
 
-- create_venv_install_requirements.bat This should be done after copying this repo on the first start so it get all the environment ready for the project.
+- `create_venv_install_requirements.bat`: This should be done after copying this repository for the first time. It sets up the environment necessary for the project.
 
-- activate.bat This activate the enviroment to run the python files this is also needed when installing a new package.
+- `activate.bat`: Activates the environment to run the Python files. This is also needed when installing a new package.
 
-## Files
+### Files:
 
-- The .exe File is the final file of this version V0.01 that is in the dist folder.
+- The `.exe` file is the final file of this version (V0.01) located in the `dist` folder.
 
-- The .rar File can be used directly to run the app on your computer just unzip the files and run the .exe.
+- The `.rar` file can be directly used to run the app on your computer. Simply unzip the files and run the `.exe`.
 
-- The dates.csv is where the names, dates and descriptions are stored. It can be edited by hitting the Edit icon or also with any .csv reader.
+- `dates.csv` stores names, dates, and descriptions. It can be edited by clicking the Edit icon or using any `.csv` reader.
 
-- The settings.sqlite Is where we store the user options such as language text color etc.. An also the position of the dragable widget.
+- `settings.sqlite` stores user options such as language, text color, etc., as well as the position of the draggable widget.
 
-- The icons images for the buttons are in the icon folder and for running the .exe it need this folder in the same path.
+- Icon images for the buttons are located in the `icon` folder. For running the `.exe`, this folder needs to be in the same path.
 
-## On Hover Buttons
+### On Hover Buttons:
 
-### 1:
+1. **Plus Icon**: Opens the AddDate Window to add a date to the `.csv` file.
+2. **Edit Icon**: Opens the Edit Window where the `.csv` file can be edited.
+3. **Settings Icon**: Opens the settings window where language, text weight, text color, and opacity can be changed.
+4. **Close Icon**: Closes the window and the main app.
 
-_Plus Icon_: The first button is to the AddDate Window to add a date to the .csv file.
+### Getting Started:
 
-### 2:
+After making the pull request of this repository, run the following commands in this order:
 
-_Edit Icon_: The second button is to open the Edit Window where we can edit the .csv file.
+- `create_venv_install_requirements.bat`
+- `make_exe.bat`
 
-### 3:
+If necessary for testing, delete the current `dates.csv` and rename `dummy_dates.csv` to `dates.csv`.
 
-_Settings Icon_: The third button is to open the settings window where we can change language, text weight, text color, and opacity.
+### Windows:
 
-### 4:
+- **DraggableWidget**: This is where the data of the nearest date found is shown.
 
-_Close Icon_: The forth button is to close the window and the main app.
+#### Keyboard Shortcuts:
 
-## Getting Started
+- `a`: Opens the AddDateWindow
+- `e`: Opens the CSVEditorWindow
+- `o`: Opens the OptionWindow
+- `Del/Delete`: Closes the app
 
-### After making the pull request of this repository run the commands in this following order:
+- **AddDateWindow**: This is where the `.csv` file is edited.
 
-- create_venv_install_requirements.bat
+#### Keyboard Shortcuts:
 
-- make_exe.bat
+- `s`: Save changes
+- `Esc/Escape`: Close the edit window
 
-#### And if necessary for testing delete the currenct dates.csv and rename the dummy_dates.csv to dates.csv
+- **CSVEditorWindow**: This is where the `.csv` file is edited.
 
-## Windows
+#### Keyboard Shortcuts:
 
-- DraggableWidget this is where the data of the nearest date found is shown
-
-### Keybord Shortcuts
-
-a: Open the AddDateWindow
-e: Open the CSVEditorWindow
-o: Open the OptionWindow
-Del/Delete: Close the app
-
-- AddDateWindow this is where we edit the .csv file
-
-### Keybord Shortcuts
-
-s: Save changes
-Esc/Escape: Close the edit window
-
-- CSVEditorWindow this is where we edit the .csv file
-
-### Keybord Shortcuts
-
-s: Save changes
-Esc/Escape: Close the edit window
+- `s`: Save changes
+- `Esc/Escape`: Close the edit window
