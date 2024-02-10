@@ -57,8 +57,8 @@ class DatabaseConnection:
                         font_weight TEXT NOT NULL DEFAULT 'NORMAL',
                         text_colour TEXT NOT NULL DEFAULT '#000000',
                         widget_colour TEXT NOT NULL DEFAULT '#ffffff',
-                        widget_x_position INTEGER NOT NULL DEFAULT 1624,
-                        widget_y_position INTEGER NOT NULL DEFAULT 75,
+                        widget_x_position INTEGER NOT NULL DEFAULT 1155,
+                        widget_y_position INTEGER NOT NULL DEFAULT 201,
                         option_window_x_position INTEGER NOT NULL DEFAULT 1370,
                         option_window_y_position INTEGER NOT NULL DEFAULT 50,
                         data_window_x_position INTEGER NOT NULL DEFAULT 0.0,
@@ -75,7 +75,7 @@ class DatabaseConnection:
                         data_window_x_position, data_window_y_position,
                         opacity
                     ) VALUES (
-                        'EN', 'NORMAL', '#000000', '#ffffff', 1624, 75, 1370, 50, 0.0, 0.0, '80%'
+                        'EN', 'NORMAL', '#000000', '#ffffff', 1155, 201, 1370, 50, 0.0, 0.0, '80%'
                     );
                     """
 

@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import ttk  # Import ttk for styling
 import csv
 from tkcalendar import DateEntry
+import babel.numbers  # Do not remove this is necessary for the build
 
 csv_path = Path("dates.csv")
 
