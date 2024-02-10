@@ -53,23 +53,16 @@ If necessary for testing, delete the current `dates.csv` and rename `dummy_dates
 
 - **DraggableWidget**: This is where the data of the nearest date found is shown.
 
-#### Keyboard Shortcuts:
+#### Keyboard Shortcuts of DraggableWidget:
 
 - `a`: Opens the AddDateWindow
 - `e`: Opens the CSVEditorWindow
 - `o`: Opens the OptionWindow
-- `Del/Delete`: Closes the app
-
-- **AddDateWindow**: This is where the `.csv` file is edited.
-
-#### Keyboard Shortcuts:
-
-- `s`: Save changes
-- `Esc/Escape`: Close the edit window
+- `Del/Delete`: Closes the entire app
 
 - **CSVEditorWindow**: This is where the `.csv` file is edited.
 
-#### Keyboard Shortcuts:
+#### Keyboard Shortcuts of CSVEditorWindow:
 
 - `s`: Save changes
-- `Esc/Escape`: Close the edit window
+- `Esc/Escape`: Close the CSVEditorWindow
