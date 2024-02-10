@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import ttk  # Import ttk for styling
 import csv
 from tkcalendar import DateEntry
+import babel.numbers  # Do not remove this is necessary for the build
 
 csv_path = Path("dates.csv")
 
@@ -22,6 +23,7 @@ class AddDateWindow(tk.Toplevel):
         plus_icon = tk.PhotoImage(file=icons_path / "plus_icon.png")
         # Set window icon
         self.iconphoto(True, plus_icon)
+
         self.translation_option = {
             "EN": (
                 "Add New Date",
@@ -160,8 +162,3 @@ class AddDateWindow(tk.Toplevel):
             return self.winfo_exists()
         except tk.TclError:
             return False
-
-
-if __name__ == "__main__":
-    app = AddDateWindow(None)
-    app.mainloop()
