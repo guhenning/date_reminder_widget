@@ -62,7 +62,7 @@ class DraggableWindow(tk.Tk):
 
         # Display information for all entries with the nearest date
         for nearest_date, nearest_data in nearest_dates:
-            label_text = f"{self.translated_text['name']}: {nearest_data[self.translated_text['name']]}\n{self.translated_text['date']}: {nearest_data[self.translated_text['name']]}\n{self.translated_text['description']}: {nearest_data[self.translated_text['name']]}"
+            label_text = f"{self.translated_text['name']}: {nearest_data[self.translated_text['name']]}\n{self.translated_text['date']}: {nearest_data[self.translated_text['date']]}\n{self.translated_text['description']}: {nearest_data[self.translated_text['description']]}"
             label = tk.Label(
                 frame,
                 text=label_text,
@@ -222,7 +222,7 @@ class DraggableWindow(tk.Tk):
 
         # Display information for all entries with the nearest date
         for nearest_date, nearest_data in nearest_dates:
-            label_text = f"{self.translated_text['name']}: {nearest_data[self.translated_text['name']]}\n{self.translated_text['date']}: {nearest_data[self.translated_text['name']]}\n{self.translated_text['description']}: {nearest_data[self.translated_text['name']]}"
+            label_text = f"{self.translated_text['name']}: {nearest_data[self.translated_text['name']]}\n{self.translated_text['date']}: {nearest_data[self.translated_text['date']]}\n{self.translated_text['description']}: {nearest_data[self.translated_text['description']]}"
             label = tk.Label(
                 frame,
                 text=label_text,
