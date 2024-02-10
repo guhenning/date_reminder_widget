@@ -13,12 +13,15 @@ if not csv_path.is_file():
         writer.writerow(["Name", "Date", "Description"])
 
 
-class AddDateWindow(tk.Tk):
+class AddDateWindow(tk.Toplevel):
     def __init__(self, parent, settings=None):
         super().__init__()
 
         self.parent = parent
-
+        icons_path = Path("icons")
+        plus_icon = tk.PhotoImage(file=icons_path / "plus_icon.png")
+        # Set window icon
+        self.iconphoto(True, plus_icon)
         self.translation_option = {
             "EN": (
                 "Add New Date",
