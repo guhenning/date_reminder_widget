@@ -18,13 +18,42 @@ csv_path = Path("dates.csv")
 #   TODO: Add resizing of cells
 ##
 class CSVEditorWindow(tk.Toplevel):
-    def __init__(self, parent):
-        super().__init__(parent)
+    def __init__(self, parent, settings=None):
+        super().__init__()
         self.parent = parent
+
+        self.translation_option = {
+            "EN": (
+                "Editor",
+                "File",
+                "Exit",
+                "Save",
+            ),
+            "BR": (
+                "Editor",
+                "Arquivo",
+                "Sair",
+                "Salvar",
+            ),
+            "ES": (
+                "Editor",
+                "Archivo",
+                "Salir",
+                "Guardar",
+            ),
+            "IT": (
+                "Editor",
+                "File",
+                "Uscita",
+                "Salva",
+            ),
+        }
+
+        self.language_set = settings["language"]
 
         self.createDefaultWidgets()
         # Set Title
-        self.title("Editor")
+        self.title(self.translation_option[self.language_set][0])
         ## CODE ENTRY ###
         default_font = tkFont.nametofont("TkTextFont")
         default_font.configure(family="Helvetica")
@@ -37,10 +66,22 @@ class CSVEditorWindow(tk.Toplevel):
         # Create Menu
         menubar = Menu(self)
         filemenu = Menu(menubar, tearoff=0)
-        filemenu.add_command(label="Save", command=self.save)
-        filemenu.add_command(label="Exit", command=self.close)
-        menubar.add_cascade(label="File", menu=filemenu)
-        menubar.add_command(label="Exit", command=self.close)
+        # Save
+        filemenu.add_command(
+            label=self.translation_option[self.language_set][3], command=self.save
+        )
+        # Exit horizontal menu
+        filemenu.add_command(
+            label=self.translation_option[self.language_set][2], command=self.close
+        )
+        # File
+        menubar.add_cascade(
+            label=self.translation_option[self.language_set][1], menu=filemenu
+        )
+        # Exit cascade menu
+        menubar.add_command(
+            label=self.translation_option[self.language_set][2], command=self.close
+        )
         self.config(menu=menubar)
 
         # Bind esc keyboard to close window

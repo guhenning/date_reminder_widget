@@ -189,7 +189,7 @@ class DraggableWindow(tk.Tk):
         else:
             print("opening")
             try:
-                self.edit_dates_window = CSVEditorWindow(self)
+                self.edit_dates_window = CSVEditorWindow(self, self.settings)
                 self.edit_dates_window.lift()
             except Exception as e:
                 print("Error:", e)
