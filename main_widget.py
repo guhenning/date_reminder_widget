@@ -279,7 +279,7 @@ class DraggableWindow(tk.Tk):
     # Hover Buttons
     def show_buttons(self, event):
         # Adjust the position to show the buttons with a slight offset to the left
-        self.button_frame.place_configure(relx=0.9)
+        self.button_frame.place_configure(relx=1)
 
     def hide_buttons(self, event=None):
         # Hide the buttons by moving them to the right side
