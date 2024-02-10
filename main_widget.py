@@ -33,10 +33,30 @@ class DraggableWindow(tk.Tk):
         # language
         self.language = self.settings["language"]
         self.translations = {
-            "EN": {"name": "Name", "date": "Date", "description": "Description"},
-            "IT": {"name": "Nome", "date": "Data", "description": "Descrizione"},
-            "BR": {"name": "Nome", "date": "Data", "description": "Descrição"},
-            "ES": {"name": "Nombre", "date": "Fecha", "description": "Descripción"},
+            "EN": {
+                "name": "Name",
+                "date": "Date",
+                "description": "Description",
+                "no_date": "Oh No!! No Dates Found, Add New Dates!!!",
+            },
+            "IT": {
+                "name": "Nome",
+                "date": "Data",
+                "description": "Descrizione",
+                "no_date": "Oh No!! Nessuna data trovata, aggiungi nuove date!!!",
+            },
+            "BR": {
+                "name": "Nome",
+                "date": "Data",
+                "description": "Descrição",
+                "no_date": "Oh Não!! Nenhuma data encontrada, adicione novas datas!!!",
+            },
+            "ES": {
+                "name": "Nombre",
+                "date": "Fecha",
+                "description": "Descripción",
+                "no_date": "Oh No!! No se encontraron fechas, ¡Agrega nuevas fechas!!!",
+            },
         }
         self.translated_text = self.translations[self.language]
 
@@ -50,6 +70,20 @@ class DraggableWindow(tk.Tk):
         frame.pack(expand=True, fill=tk.X)
 
         custom_font = ("Arial", 10, self.settings["font_weight"].lower())
+
+        # if len is 0 dont have any dates on file as user to add!
+        if len(nearest_dates) == 0:
+            # Display information for all entries with the nearest date
+            label = tk.Label(
+                frame,
+                text=f"{self.translated_text['no_date']}",
+                anchor="center",
+                justify="center",
+                wraplength=200,
+                font=custom_font,
+                fg=self.settings["text_colour"],
+            )
+            label.pack(pady=10)
 
         # Display information for all entries with the nearest date
         for nearest_date, nearest_data in nearest_dates:
@@ -227,7 +261,21 @@ class DraggableWindow(tk.Tk):
         frame = tk.Frame(self)
         frame.pack(expand=True, fill=tk.X)
 
-        # Display information for all entries with the nearest date
+        # if len is 0 dont have any dates on file as user to add!
+        print("here")
+        print(nearest_dates)
+        if len(nearest_dates) == 0:
+            # Display information for all entries with the nearest date
+            label = tk.Label(
+                frame,
+                text=f"{self.translated_text['no_date']}",
+                anchor="center",
+                justify="center",
+                wraplength=200,
+                font=custom_font,
+                fg=self.settings["text_colour"],
+            )
+            label.pack(pady=10)
         for nearest_date, nearest_data in nearest_dates:
             label_text = f"{self.translated_text['name']}: {nearest_data[self.translated_text['name']]}\n{self.translated_text['date']}: {nearest_data[self.translated_text['date']]}\n{self.translated_text['description']}: {nearest_data[self.translated_text['description']]}"
             label = tk.Label(
