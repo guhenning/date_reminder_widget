@@ -66,3 +66,9 @@ If necessary for testing, delete the current `dates.csv` and rename `dummy_dates
 
 - `s`: Save changes
 - `Esc/Escape`: Close the CSVEditorWindow
+
+## TODO
+
+- save the last warning date on database
+- add fild to change reciever email in option window
+- add box to chose to send email true or false in option window
