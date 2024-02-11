@@ -22,30 +22,10 @@ class CSVEditorWindow(tk.Toplevel):
         self.parent = parent
         self.csv_path = Path("dates.csv")
         self.translation_option = {
-            "EN": (
-                "Editor",
-                "File",
-                "Exit",
-                "Save",
-            ),
-            "BR": (
-                "Editor",
-                "Arquivo",
-                "Sair",
-                "Salvar",
-            ),
-            "ES": (
-                "Editor",
-                "Archivo",
-                "Salir",
-                "Guardar",
-            ),
-            "IT": (
-                "Editor",
-                "File",
-                "Uscita",
-                "Salva",
-            ),
+            "EN": ("Editor", "File", "Exit", "Save", "Add Line"),
+            "BR": ("Editor", "Arquivo", "Sair", "Salvar", "Adicionar Linha"),
+            "ES": ("Editor", "Archivo", "Salir", "Guardar", "Agregar línea"),
+            "IT": ("Editor", "File", "Uscita", "Salva", "Aggiungi riga"),
         }
 
         self.language_set = settings["language"]
@@ -63,12 +43,19 @@ class CSVEditorWindow(tk.Toplevel):
 
         self.option_add("*Font", default_font)
         self.option_add("*Font", default_font)
+
+        # Initialize defalut values for numbers of row and columns
+        self.current_columns_number = 3
+        self.current_rows_number = 1
         # Load Date Cels
         self.loadCells()
 
         # Create Menu
         menubar = Menu(self)
         filemenu = Menu(menubar, tearoff=0)
+        filemenu.add_command(
+            label=self.translation_option[self.language_set][4], command=self.addNewCell
+        )
         # Save
         filemenu.add_command(
             label=self.translation_option[self.language_set][3], command=self.save
@@ -301,6 +288,9 @@ class CSVEditorWindow(tk.Toplevel):
                 col = len(row)
                 rows.append(row)
 
+        self.current_columns_number = len(row)
+        self.current_rows_number = len(rows)
+
         # create the array
         for i in range(len(ary)):
             for j in range(col):
@@ -357,6 +347,29 @@ class CSVEditorWindow(tk.Toplevel):
         self.currentCells = loadCells
         self.currentCell = self.currentCells[0][0]
 
+    def addNewCell(self):
+        # Read the existing CSV file
+        with open(self.csv_path, "r", encoding="utf-8") as csvfile:
+            reader = csv.reader(csvfile)
+            rows = list(reader)
+
+        # Determine the position to insert the new line
+        insert_index = len(rows)  # Insert at the end of the file
+
+        # Create a new list with the additional row
+        new_row = ["" for _ in range(len(rows[0]))]  # Create a row with empty values
+        rows.insert(insert_index, new_row)
+
+        # Write the modified data to a new CSV file
+        with open(self.csv_path, "w", newline="", encoding="utf-8") as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerows(rows)
+
+        # Reload the cells to reflect the changes
+        self.loadCells()
+        # Move the cursor back to the first column of the added line
+        self.currentCells[insert_index][0].focus_force()
+
     def saveAs(self):
         filename = filedialog.asksaveasfilename(
             initialdir=".",
@@ -381,7 +394,8 @@ class CSVEditorWindow(tk.Toplevel):
                         row += vals[x + i]
 
                 csvfile.write(row + "\n")
-
+        if self.parent:
+            self.parent.reload_widget()
         messagebox.showinfo("", "Saved!")
 
     def save(self):
@@ -401,7 +415,8 @@ class CSVEditorWindow(tk.Toplevel):
                         row += vals[x + i]
 
                 csvfile.write(row + "\n")
-
+        if self.parent:
+            self.parent.reload_widget()
         messagebox.showinfo("", "Saved!")
 
     def is_open(self):

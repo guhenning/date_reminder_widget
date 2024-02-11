@@ -238,6 +238,12 @@ class DraggableWindow(tk.Tk):
             # Connect to the SQLite database and get settings
             self.settings = db_connection.get_settings()[0]
 
+        # opacity
+        opacity_percentage_dict = {f"{i}%": i / 100 for i in range(10, 101, 10)}
+        self.attributes(
+            "-alpha", opacity_percentage_dict[self.settings["opacity"]]
+        )  # Set window transparency
+
         # language
         if self.language != self.settings["language"]:
             self.language = self.settings["language"]
