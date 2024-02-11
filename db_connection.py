@@ -52,9 +52,10 @@ class DatabaseConnection:
                         data_window_x_position INTEGER NOT NULL DEFAULT 0.0,
                         data_window_y_position INTEGER NOT NULL DEFAULT 0.0,
                         opacity TEXT NOT NULL DEFAULT '80%',
-                        reciever_email TEXT
-                        date_last_warning TEXT
-                        warning_period INTEGER
+                        reciever_email TEXT,
+                        date_last_warning TEXT,
+                        warning_period INTEGER,
+                        send_warning_email BOOLEAN
                     );                
                     """
 
@@ -65,9 +66,9 @@ class DatabaseConnection:
                         option_window_x_position, option_window_y_position,
                         data_window_x_position, data_window_y_position,
                         opacity, reciever_email, date_last_warning, 
-                        warning_period
+                        warning_period, send_warning_email
                     ) VALUES (
-                        'EN', 'NORMAL', '#000000', '#ffffff', 1155, 201, 1370, 50, 0.0, 0.0, '80%', ' ', 01-jan-2022, 1
+                        'EN', 'NORMAL', '#000000', '#ffffff', 1155, 201, 1370, 50, 0.0, 0.0, '80%', ' ', 01-jan-2022, 1, 1
                     );
                     """
 

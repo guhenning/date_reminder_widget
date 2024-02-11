@@ -5,7 +5,7 @@ from option_window import OptionWindow
 from add_date_window import AddDateWindow
 from csv_editor import CSVEditorWindow
 from db_connection import DatabaseConnection
-from utils import resize_icon
+from utils import resize_icon, format_text_and_send_email
 from pathlib import Path
 from datetime import timedelta
 
@@ -64,10 +64,13 @@ class DraggableWindow(tk.Tk):
         # Find all entries with the nearest date
         nearest_dates = self.find_nearest_dates()
 
-        date_last_warning = self.settings["date_last_warning"]
-        warning_period = self.settings["warning_period"]
-        # warn user send email with the dates found
-        warning_dates = self.find_warning_dates(date_last_warning, warning_period)
+        if self.settings["send_warning_email"] == 1:
+            # send_warning_email is true lets found the dates in the period and send email
+            date_last_warning = self.settings["date_last_warning"]
+            warning_period = self.settings["warning_period"]
+            # warn user send email with the dates found
+            warning_dates = self.find_warning_dates(date_last_warning, warning_period)
+            format_text_and_send_email(warning_dates)
 
         self.set_widget_size(len(nearest_dates))
 
@@ -149,9 +152,6 @@ class DraggableWindow(tk.Tk):
 
         # Create the end date by adding the specified number of days to today's date
         end_date = today + timedelta(days=days_from_today)
-        print(f"self.data: {self.data}")
-        print(f"Start Date {start_date}")
-        print(f"End Date {end_date}")
 
         future_dates = [
             (datetime.strptime(x[self.translated_text["date"]], "%d-%b").date(), x)
@@ -162,11 +162,9 @@ class DraggableWindow(tk.Tk):
             .replace(year=start_date.year)
             <= end_date.replace(year=start_date.year)
         ]
-        print(f"future Dates: {future_dates}")
 
         if future_dates:
             nearest_entries = [(d[0].strftime("%d-%b"), d[1]) for d in future_dates]
-            print(f"nearest_entries: {nearest_entries}")
             return nearest_entries
         else:
             return []

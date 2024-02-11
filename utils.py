@@ -24,7 +24,7 @@ def send_email(subject, body):
     RECIEVER_EMAIL = os.environ.get("RECIEVER_EMAIL")
     try:
         msg = EmailMessage()
-        msg.set_content(body)
+        msg.set_content(body, subtype="html")
         msg["subject"] = subject
         msg["to"] = RECIEVER_EMAIL
         msg["from"] = SENDER_EMAIL
@@ -37,3 +37,30 @@ def send_email(subject, body):
 
     except Exception as e:
         print(f"Error sending email: {e}")
+
+
+def format_text_and_send_email(data):
+    formated_text = ""
+    # Group the data by date
+    grouped_data = {}
+    for date, details in data:
+        if date not in grouped_data:
+            grouped_data[date] = []
+        grouped_data[date].append(details)
+
+    # Format the text
+    for date, details_list in grouped_data.items():
+        formated_text += f"<b>{date}:</b><br>"  # Bold the date
+        for details in details_list:
+            name = details["Name"]
+            description = details["Description"]
+            if description:
+                formated_text += f"- {name} ({description})<br>"
+            else:
+                formated_text += f"- {name}<br>"
+        formated_text += "<br>"  # Add a new line after each date's details
+
+    # Uncomment the following line to send the email
+    # send_email("Near Important Dates to Reminder!!!", formated_text)
+
+    # print(formated_text)  # For testing, print the formatted text
