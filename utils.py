@@ -63,4 +63,4 @@ def format_text_and_send_email(data):
     # Uncomment the following line to send the email
     # send_email("Near Important Dates to Reminder!!!", formated_text)
 
-    # print(formated_text)  # For testing, print the formatted text
+    # print(formated_text)  # For testing
