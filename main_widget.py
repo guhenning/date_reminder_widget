@@ -5,8 +5,9 @@ from option_window import OptionWindow
 from add_date_window import AddDateWindow
 from csv_editor import CSVEditorWindow
 from db_connection import DatabaseConnection
-from utils import resize_icon
+from utils import resize_icon, format_text_and_send_email
 from pathlib import Path
+from datetime import timedelta
 
 icons_path = Path("icons")
 
@@ -62,6 +63,14 @@ class DraggableWindow(tk.Tk):
 
         # Find all entries with the nearest date
         nearest_dates = self.find_nearest_dates()
+
+        if self.settings["send_warning_email"] == 1:
+            # send_warning_email is true lets found the dates in the period and send email
+            date_last_warning = self.settings["date_last_warning"]
+            warning_period = self.settings["warning_period"]
+            # warn user send email with the dates found
+            warning_dates = self.find_warning_dates(date_last_warning, warning_period)
+            format_text_and_send_email(warning_dates)
 
         self.set_widget_size(len(nearest_dates))
 
@@ -131,6 +140,34 @@ class DraggableWindow(tk.Tk):
         except FileNotFoundError:
             print(f"File not found: {file_path}")
         return data
+
+    def find_warning_dates(self, start_date_str, days_from_today):
+        # start date is the date of the last warning and the days_from_today is the amount of days after today to find dates
+        # so if user wants warning 1 day before this will be one
+
+        # Convert the start date string to a datetime object
+        start_date = datetime.strptime(start_date_str, "%d-%m-%Y").date()
+
+        today = datetime.now().date()
+
+        # Create the end date by adding the specified number of days to today's date
+        end_date = today + timedelta(days=days_from_today)
+
+        future_dates = [
+            (datetime.strptime(x[self.translated_text["date"]], "%d-%b").date(), x)
+            for x in self.data
+            if start_date
+            < datetime.strptime(x[self.translated_text["date"]], "%d-%b")
+            .date()
+            .replace(year=start_date.year)
+            <= end_date.replace(year=start_date.year)
+        ]
+
+        if future_dates:
+            nearest_entries = [(d[0].strftime("%d-%b"), d[1]) for d in future_dates]
+            return nearest_entries
+        else:
+            return []
 
     def find_nearest_dates(self):
         today = datetime.now().date()
@@ -237,6 +274,12 @@ class DraggableWindow(tk.Tk):
         with DatabaseConnection() as db_connection:
             # Connect to the SQLite database and get settings
             self.settings = db_connection.get_settings()[0]
+
+        # opacity
+        opacity_percentage_dict = {f"{i}%": i / 100 for i in range(10, 101, 10)}
+        self.attributes(
+            "-alpha", opacity_percentage_dict[self.settings["opacity"]]
+        )  # Set window transparency
 
         # language
         if self.language != self.settings["language"]:

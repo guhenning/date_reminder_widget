@@ -111,9 +111,8 @@ class OptionWindow(tk.Toplevel):
         # set opacity initial value from data base
         self.opacity_var.set(settings["opacity"])
         opacity_from_db = settings["opacity"]
-        opacity_dict = {
-            f"{i}%": (i // 10) for i in range(0, 101, 10)
-        }  # 10%:0 20%:1 30%:2..... 100%:9
+        # 10%:0 20%:1 30%:2..... 100%:9
+        opacity_dict = {f"{i}%": (i // 10) - 1 for i in range(10, 101, 10)}
         opacity_list.current(opacity_dict[opacity_from_db])
         # update selected font_opacity
         opacity_list.bind("<<ComboboxSelected>>", self.update_opacity_var)
@@ -164,9 +163,7 @@ class OptionWindow(tk.Toplevel):
         screen_width = self.winfo_screenwidth()
         screen_height = self.winfo_screenheight()
         x_centered = screen_width - 550  # right margin 500
-        # print(f"X option: {x_centered}")
         y_centered = screen_height - (screen_height - 50)  # top margin 50
-        # print(f"Y option: {y_centered}")
 
         # Set the window size and position with equal padding
         self.geometry(f"250x450+{x_centered}+{y_centered}")

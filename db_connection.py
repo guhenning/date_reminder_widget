@@ -20,18 +20,6 @@ class DatabaseConnection:
         else:
             print("No connection to close.")
 
-    # def create_sqlite_file(self):
-    #     try:
-    #         # Connect to the SQLite database (creates the file if it doesn't exist)
-    #         self.connection = sqlite3.connect(self.db_name)
-    #         self.cursor = self.connection.cursor()
-    #         self.create_table()
-    #     except sqlite3.Error as e:
-    #         print(f"Error creating SQLite file: {e}")
-    #     finally:
-    #         if self.connection is not None:
-    #             self.connection.close()
-
     def connect(self):
         try:
             # Check if table is created if not create it
@@ -63,7 +51,11 @@ class DatabaseConnection:
                         option_window_y_position INTEGER NOT NULL DEFAULT 50,
                         data_window_x_position INTEGER NOT NULL DEFAULT 0.0,
                         data_window_y_position INTEGER NOT NULL DEFAULT 0.0,
-                        opacity TEXT NOT NULL DEFAULT '80%'
+                        opacity TEXT NOT NULL DEFAULT '80%',
+                        reciever_email TEXT,
+                        date_last_warning TEXT,
+                        warning_period INTEGER,
+                        send_warning_email BOOLEAN
                     );                
                     """
 
@@ -73,9 +65,10 @@ class DatabaseConnection:
                         widget_colour, widget_x_position, widget_y_position,
                         option_window_x_position, option_window_y_position,
                         data_window_x_position, data_window_y_position,
-                        opacity
+                        opacity, reciever_email, date_last_warning, 
+                        warning_period, send_warning_email
                     ) VALUES (
-                        'EN', 'NORMAL', '#000000', '#ffffff', 1155, 201, 1370, 50, 0.0, 0.0, '80%'
+                        'EN', 'NORMAL', '#000000', '#ffffff', 1155, 201, 1370, 50, 0.0, 0.0, '80%', ' ', 01-jan-2022, 1, 1
                     );
                     """
 
