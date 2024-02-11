@@ -64,9 +64,10 @@ class DraggableWindow(tk.Tk):
         # Find all entries with the nearest date
         nearest_dates = self.find_nearest_dates()
 
+        date_last_warning = self.settings["date_last_warning"]
+        warning_period = self.settings["warning_period"]
         # warn user send email with the dates found
-        warning_dates = self.find_warning_dates("11-02-2024", 5)
-        print(warning_dates)
+        warning_dates = self.find_warning_dates(date_last_warning, warning_period)
 
         self.set_widget_size(len(nearest_dates))
 
@@ -148,21 +149,24 @@ class DraggableWindow(tk.Tk):
 
         # Create the end date by adding the specified number of days to today's date
         end_date = today + timedelta(days=days_from_today)
+        print(f"self.data: {self.data}")
+        print(f"Start Date {start_date}")
+        print(f"End Date {end_date}")
 
         future_dates = [
             (datetime.strptime(x[self.translated_text["date"]], "%d-%b").date(), x)
             for x in self.data
-            if today
-            <= datetime.strptime(x[self.translated_text["date"]], "%d-%b")
+            if start_date
+            < datetime.strptime(x[self.translated_text["date"]], "%d-%b")
             .date()
-            .replace(year=today.year)
-            <= end_date
+            .replace(year=start_date.year)
+            <= end_date.replace(year=start_date.year)
         ]
+        print(f"future Dates: {future_dates}")
+
         if future_dates:
-            min_date = min(d[0] for d in future_dates)
-            nearest_entries = [
-                (d[0].strftime("%d-%b"), d[1]) for d in future_dates if d[0] == min_date
-            ]
+            nearest_entries = [(d[0].strftime("%d-%b"), d[1]) for d in future_dates]
+            print(f"nearest_entries: {nearest_entries}")
             return nearest_entries
         else:
             return []
